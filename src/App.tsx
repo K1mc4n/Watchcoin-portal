@@ -17,7 +17,7 @@ function App() {
   const { isConnected, address } = useAccount();
 
   useEffect(() => {
-    fetch("https://newsdata.io/api/1/news?apikey=pub_26b2c8f1c1854675a583e2ce97569c6b&country=id&language=id&category=technology")
+    fetch("https://newsdata.io/api/1/latest?apikey=pub_26b2c8f1c1854675a583e2ce97569c6b&q=Crypto")
       .then((res) => res.json())
       .then((data) => setArticles(data.results))
       .catch((err) => console.error(err));
