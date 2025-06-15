@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { sdk } from "@farcaster/frame-sdk";
 
 type Question = {
   question: string;
@@ -85,6 +86,10 @@ const questions: Question[] = [
 ];
 
 function App() {
+  useEffect(() => {
+    sdk.actions.ready(); // Notify Farcaster that the frame is ready
+  }, []);
+
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
