@@ -14,14 +14,14 @@ function App() {
   useEffect(() => {
     sdk.actions.ready();
 
-    fetch("https://newsdata.io/api/1/latest?apikey=pub_26b2c8f1c1854675a583e2ce97569c6b&q=Crypto")
+    fetch("https://cryptopanic.com/api/v1/posts/?auth_token=e6bc9cb5897a7964bef35e975108cc7f4c36bdb1&filter=important&currencies=BTC,ETH")
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data.results)) {
           const mappedArticles = data.results.map((item: any) => ({
             title: item.title || "No title",
-            description: item.description || "No description",
-            link: item.link || "#",
+            description: item.domain || item.source?.title || "No description",
+            link: item.url || "#",
           }));
           setArticles(mappedArticles);
         } else {
