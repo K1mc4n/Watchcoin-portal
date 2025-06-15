@@ -117,6 +117,9 @@ function App() {
     return "bg-gray-800";
   };
 
+  const shareText = `I scored ${score}/${questions.length} on the Crypto & Farcaster Quiz! Try it here: https://watchcoin-portal.vercel.app/`;
+  const encodedText = encodeURIComponent(shareText);
+
   return (
     <div className="p-4 text-white bg-gray-900 min-h-screen">
       <h1 className="text-2xl font-bold mb-6">🧠 Crypto & Farcaster Quiz</h1>
@@ -128,7 +131,7 @@ function App() {
           </h2>
 
           <a
-            href={`https://warpcast.com/~/compose?text=I scored ${score}/${questions.length} on the Crypto & Farcaster Quiz! Try it here: https://watchcoin-portal.vercel.app/`}
+            href={`https://warpcast.com/~/compose?text=${encodedText}`}
             target="_blank"
             rel="noopener noreferrer"
             className="block bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded mt-4"
