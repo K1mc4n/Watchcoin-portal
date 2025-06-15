@@ -5,7 +5,6 @@ type Article = {
   title: string;
   url: string;
   source: string;
-  sentiment: string;
   image: string | null;
 };
 
@@ -16,24 +15,17 @@ function App() {
 
   useEffect(() => {
     sdk.actions.ready();
-    fetch("https://cryptopanic.com/api/developer/v2/posts/?auth_token=e6bc9cb5897a7964bef35e975108cc7f4c36bdb1")
+
+    fetch("https://api.coinstats.app/public/v1/news?skip=0&limit=10&category=cryptocurrency")
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data.results)) {
-          const mapped = data.results.map((item: any) => {
-            const url =
-              item.metadata?.original_url ||
-              item.domain_link ||
-              item.url ||
-              "#";
-            return {
-              title: item.title ?? "Untitled",
-              url: url.startsWith("http") ? url : "#",
-              source: item.source?.title ?? "Unknown",
-              sentiment: item.sentiment ?? "neutral",
-              image: item.metadata?.image ?? null,
-            };
-          });
+        if (Array.isArray(data.news)) {
+          const mapped = data.news.map((item: any) => ({
+            title: item.title,
+            url: item.link,
+            source: item.source || "Unknown",
+            image: item.imgURL || null,
+          }));
           setArticles(mapped);
         } else {
           setError("Unexpected response format.");
@@ -48,58 +40,56 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
-      {/* Header */}
-      <header className="flex justify-between items-center p-4 border-b border-gray-300">
+    <div className="bg-white text-black min-h-screen px-4 py-6 font-sans">
+      <header className="flex items-center justify-between border-b pb-4 mb-6">
         <div className="flex items-center space-x-2">
-          <div className="bg-yellow-400 text-white font-bold rounded-full w-8 h-8 flex items-center justify-center">W</div>
-          <span className="text-lg font-bold">WATCHCOIN</span>
+          <div className="bg-yellow-400 text-white font-bold w-8 h-8 rounded-full flex items-center justify-center">
+            W
+          </div>
+          <h1 className="text-xl font-bold">WATCHCOIN</h1>
         </div>
-        <nav className="space-x-6 text-sm font-medium">
+        <nav className="space-x-4 text-sm">
           <a href="#" className="hover:underline">Home</a>
           <a href="#" className="hover:underline">News</a>
           <a href="#" className="hover:underline">Contact</a>
         </nav>
       </header>
 
-      {/* Hero Section */}
-      <section className="p-8 text-center">
-        <h1 className="text-4xl font-bold mb-4">Read News While Earning</h1>
-        <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
+      <section className="mb-8">
+        <h2 className="text-4xl font-bold leading-snug">Read News While Earning</h2>
+        <button className="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
           Explore
         </button>
       </section>
 
-      {/* Articles */}
-      <main className="px-4 md:px-8 pb-10">
-        {loading && <p className="text-gray-500 text-center">Loading news...</p>}
-        {error && <p className="text-red-500 text-center">{error}</p>}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {articles.map((article, idx) => (
-            <a
-              key={idx}
-              href={article.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border rounded-xl p-4 hover:shadow-lg transition flex items-start space-x-4"
-            >
-              <div className="w-12 h-12 bg-gray-200 rounded overflow-hidden flex-shrink-0">
-                {article.image ? (
-                  <img src={article.image} alt="thumbnail" className="w-full h-full object-cover" />
-                ) : (
-                  <div className="flex items-center justify-center h-full w-full text-gray-400 text-xl">📰</div>
-                )}
-              </div>
-              <div>
-                <h2 className="font-semibold text-lg leading-tight">{article.title}</h2>
-                <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                  Source: {article.source}
-                </p>
-              </div>
-            </a>
-          ))}
-        </div>
-      </main>
+      {loading && <p className="text-gray-500">Loading news...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+
+      <div className="grid md:grid-cols-2 gap-6">
+        {articles.map((article, idx) => (
+          <div key={idx} className="border rounded p-4 flex space-x-4 items-start hover:shadow-md transition">
+            <div className="w-16 h-16 bg-gray-200 flex-shrink-0 overflow-hidden rounded">
+              {article.image ? (
+                <img src={article.image} alt="thumbnail" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-400">📰</div>
+              )}
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-lg">{article.title}</h3>
+              <p className="text-sm text-gray-600">Source: {article.source}</p>
+              <a
+                href={article.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 text-sm hover:underline mt-1 inline-block"
+              >
+                Read more →
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
