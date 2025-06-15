@@ -45,7 +45,7 @@ function App() {
               rel="noopener noreferrer"
               className="mt-2 block text-blue-400 hover:underline"
             >
-              Baca selengkapnya
+              Read more
             </a>
           </div>
         ))}
