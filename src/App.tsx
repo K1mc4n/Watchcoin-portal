@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { sdk } from "@farcaster/frame-sdk";
 
 type Question = {
   question: string;
