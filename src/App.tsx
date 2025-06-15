@@ -87,7 +87,7 @@ const questions: Question[] = [
 
 function App() {
   useEffect(() => {
-    sdk.actions.ready(); // Notify Farcaster that the frame is ready
+    sdk.actions.ready(); // Notify Farcaster Frame
   }, []);
 
   const [current, setCurrent] = useState(0);
@@ -127,6 +127,16 @@ function App() {
           <h2 className="text-3xl font-bold mb-4">
             Your Score: {score} / {questions.length}
           </h2>
+
+          <a
+            href={`https://warpcast.com/~/compose?text=I scored ${score}/${questions.length} on the Crypto & Farcaster Quiz! Try it here: https://watchcoin.vercel.app`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded mt-4"
+          >
+            Share on Farcaster
+          </a>
+
           <button
             className="mt-4 bg-blue-600 px-4 py-2 rounded hover:bg-blue-700"
             onClick={() => {
