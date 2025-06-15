@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 import { useAccount, useConnect } from "wagmi";
 import { createClient } from "@supabase/supabase-js";
 
-// 🔐 Jangan lupa: simpan ini ke .env jika perlu
+// --- Supabase setup ---
 const supabaseUrl = "https://eimssxysdgftbtpfnsns.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; // POTONG untuk keamanan
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; // <-- amankan di .env nanti
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// ✅ Type artikel
+// --- Tipe artikel dari API ---
 type Article = {
   title: string;
   description?: string;
@@ -16,18 +16,19 @@ type Article = {
 };
 
 function App() {
-  useEffect(() => {
-    sdk.actions.ready();
-  }, []);
-
   const [articles, setArticles] = useState<Article[]>([]);
   const [leaderboard, setLeaderboard] = useState<{ [key: string]: number }>({});
-  const { address } = useAccount(); // ✅ Hapus isConnected yang tidak dipakai
+  const { address } = useAccount();
 
   useEffect(() => {
+    sdk.actions.ready();
+
     fetch("https://newsdata.io/api/1/latest?apikey=pub_26b2c8f1c1854675a583e2ce97569c6b&q=Crypto")
       .then((res) => res.json())
-      .then((data) => setArticles(data.results as Article[])) // ✅ type assertion
+      .then((data) => {
+        const results = data.results as Article[];
+        setArticles(results);
+      })
       .catch((err) => console.error(err));
 
     fetchLeaderboard();
