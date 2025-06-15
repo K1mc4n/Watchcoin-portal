@@ -3,7 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Create Mini App</title>
+    <title>Watchcoin Mini App</title>
+
+    <!-- Farcaster Frame Meta Tag -->
+    <meta name="fc:frame" content='{
+      "version": "next",
+      "imageUrl": "https://watchcoin-portal.vercel.app/.well-known/1750012108067.png",
+      "button": {
+        "title": "Open",
+        "action": {
+          "type": "launch_frame",
+          "name": "Watchcoin",
+          "url": "https://watchcoin-portal.vercel.app/"
+        }
+      }
+    }' />
+    
+    <!-- Optional Open Graph for sharing -->
+    <meta property="og:title" content="Watchcoin - Real-time Crypto Tracker" />
+    <meta property="og:image" content="https://watchcoin-portal.vercel.app/.well-known/1750012108067.png" />
   </head>
   <body>
     <div id="root"></div>
