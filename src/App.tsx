@@ -23,11 +23,10 @@ function App() {
         if (Array.isArray(data.results)) {
           const mapped = data.results.map((item: any) => {
             const url =
-              item.metadata?.original_url || // Langsung ke sumber berita
+              item.metadata?.original_url || // ✅ Langsung ke sumber asli
               item.domain_link ||
               item.url ||
               "#";
-
             return {
               title: item.title ?? "Untitled",
               url: url.startsWith("http") ? url : "#",
