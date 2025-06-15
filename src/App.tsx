@@ -23,7 +23,7 @@ function App() {
         if (Array.isArray(data.results)) {
           const mapped = data.results.map((item: any) => ({
             title: item.title ?? "Untitled",
-            url: item.url ?? "#",
+            url: item.domain_link ?? item.url ?? "#", // ⬅️ pakai domain_link duluan
             source: item.source?.title ?? "Unknown",
             sentiment: item.sentiment ?? "neutral",
             image: item.metadata?.image ?? null,
@@ -58,7 +58,11 @@ function App() {
         {articles.map((article, idx) => (
           <div key={idx} className="bg-gray-800 rounded-xl p-4 shadow">
             {article.image && (
-              <img src={article.image} alt="thumbnail" className="rounded mb-4 w-full max-h-48 object-cover" />
+              <img
+                src={article.image}
+                alt="thumbnail"
+                className="rounded mb-4 w-full max-h-48 object-cover"
+              />
             )}
             <h2 className="text-xl font-semibold">{article.title}</h2>
             <div className="text-sm mt-1 flex justify-between text-gray-400">
