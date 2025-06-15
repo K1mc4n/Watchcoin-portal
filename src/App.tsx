@@ -8,59 +8,79 @@ type Question = {
 
 const questions: Question[] = [
   {
-    question: "What is the capital of Indonesia?",
-    options: ["Bandung", "Surabaya", "Jakarta", "Medan"],
-    answer: "Jakarta",
+    question: "What is the maximum supply of Bitcoin?",
+    options: ["21 million", "100 million", "50 million", "Unlimited"],
+    answer: "21 million",
   },
   {
-    question: "Who created Ethereum?",
-    options: ["Vitalik Buterin", "Satoshi Nakamoto", "Elon Musk", "Brian Armstrong"],
-    answer: "Vitalik Buterin",
-  },
-  {
-    question: "What does 'BTC' stand for?",
-    options: ["BitConnect", "BitCoin", "Blockchain Coin", "Bitcoin"],
-    answer: "Bitcoin",
-  },
-  {
-    question: "Which language is used to style web pages?",
-    options: ["HTML", "JQuery", "CSS", "XML"],
-    answer: "CSS",
-  },
-  {
-    question: "Which company owns YouTube?",
-    options: ["Facebook", "Twitter", "Google", "Microsoft"],
-    answer: "Google",
-  },
-  {
-    question: "What is the largest planet in our solar system?",
-    options: ["Earth", "Saturn", "Jupiter", "Mars"],
-    answer: "Jupiter",
-  },
-  {
-    question: "Which year was Bitcoin launched?",
-    options: ["2005", "2009", "2011", "2015"],
-    answer: "2009",
-  },
-  {
-    question: "Which HTML tag is used to define an image?",
-    options: ["<image>", "<img>", "<src>", "<pic>"],
-    answer: "<img>",
-  },
-  {
-    question: "What is React primarily used for?",
-    options: ["Database design", "Backend APIs", "UI building", "Data encryption"],
-    answer: "UI building",
-  },
-  {
-    question: "What does API stand for?",
+    question: "What does DeFi stand for?",
     options: [
-      "Application Programming Interface",
-      "Advanced Protocol Interface",
-      "Applied Program Internet",
-      "Automatic Processing Integration",
+      "Decentralized Finance",
+      "Defined Finance",
+      "Digital Fund",
+      "Default Finance",
     ],
-    answer: "Application Programming Interface",
+    answer: "Decentralized Finance",
+  },
+  {
+    question: "Who created Bitcoin?",
+    options: [
+      "Vitalik Buterin",
+      "Elon Musk",
+      "Satoshi Nakamoto",
+      "Brian Armstrong",
+    ],
+    answer: "Satoshi Nakamoto",
+  },
+  {
+    question: "Which blockchain is Ethereum built on?",
+    options: ["Ethereum", "Bitcoin", "Solana", "Polygon"],
+    answer: "Ethereum",
+  },
+  {
+    question: "What is Farcaster?",
+    options: [
+      "A web hosting service",
+      "A decentralized social protocol",
+      "A crypto wallet",
+      "An NFT marketplace",
+    ],
+    answer: "A decentralized social protocol",
+  },
+  {
+    question: "What token is used to pay gas fees on Ethereum?",
+    options: ["ETH", "BTC", "USDT", "SOL"],
+    answer: "ETH",
+  },
+  {
+    question: "What is a Frame in Farcaster?",
+    options: [
+      "An image container",
+      "An interactive post",
+      "A Farcaster wallet",
+      "A block explorer",
+    ],
+    answer: "An interactive post",
+  },
+  {
+    question: "Which protocol does Farcaster use for identity?",
+    options: ["ENS", "DID", "Lens", "FID"],
+    answer: "FID",
+  },
+  {
+    question: "What does a crypto wallet store?",
+    options: [
+      "Cryptocurrency balances",
+      "Private and public keys",
+      "Usernames",
+      "Social posts",
+    ],
+    answer: "Private and public keys",
+  },
+  {
+    question: "Which language is commonly used to write Ethereum smart contracts?",
+    options: ["Rust", "Go", "Solidity", "Python"],
+    answer: "Solidity",
   },
 ];
 
@@ -95,7 +115,7 @@ function App() {
 
   return (
     <div className="p-4 text-white bg-gray-900 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6">🧠 QuizTime</h1>
+      <h1 className="text-2xl font-bold mb-6">🧠 Crypto & Farcaster Quiz</h1>
 
       {showResult ? (
         <div className="text-center mt-20">
@@ -111,7 +131,7 @@ function App() {
               setShowResult(false);
             }}
           >
-            Try Again
+            Play Again
           </button>
         </div>
       ) : (
@@ -124,7 +144,9 @@ function App() {
               <li key={option}>
                 <button
                   onClick={() => handleSelect(option)}
-                  className={`w-full text-left px-4 py-2 rounded ${getOptionClass(option)}`}
+                  className={`w-full text-left px-4 py-2 rounded ${getOptionClass(
+                    option
+                  )}`}
                   disabled={!!selected}
                 >
                   {option}
