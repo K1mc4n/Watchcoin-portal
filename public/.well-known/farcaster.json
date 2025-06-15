@@ -1,1 +1,8 @@
-{}
+{
+  "name": "Watchcoin",
+  "description": "Track cryptocurrency movements in real-time",
+  "splash": {
+    "image": "https://watchcoin-portal.vercel.app/.well-known/1750012108067.png",
+    "background": "#ffffff"
+  }
+}
