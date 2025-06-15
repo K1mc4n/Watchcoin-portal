@@ -1,87 +1,143 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { sdk } from "@farcaster/frame-sdk";
 
-type Article = {
-  title: string;
-  url: string;
-  source: string;
-  sentiment: string;
-  image: string | null;
+type Question = {
+  question: string;
+  options: string[];
+  answer: string;
 };
 
+const questions: Question[] = [
+  {
+    question: "What is the capital of Indonesia?",
+    options: ["Bandung", "Surabaya", "Jakarta", "Medan"],
+    answer: "Jakarta",
+  },
+  {
+    question: "Who created Ethereum?",
+    options: ["Vitalik Buterin", "Satoshi Nakamoto", "Elon Musk", "Brian Armstrong"],
+    answer: "Vitalik Buterin",
+  },
+  {
+    question: "What does 'BTC' stand for?",
+    options: ["BitConnect", "BitCoin", "Blockchain Coin", "Bitcoin"],
+    answer: "Bitcoin",
+  },
+  {
+    question: "Which language is used to style web pages?",
+    options: ["HTML", "JQuery", "CSS", "XML"],
+    answer: "CSS",
+  },
+  {
+    question: "Which company owns YouTube?",
+    options: ["Facebook", "Twitter", "Google", "Microsoft"],
+    answer: "Google",
+  },
+  {
+    question: "What is the largest planet in our solar system?",
+    options: ["Earth", "Saturn", "Jupiter", "Mars"],
+    answer: "Jupiter",
+  },
+  {
+    question: "Which year was Bitcoin launched?",
+    options: ["2005", "2009", "2011", "2015"],
+    answer: "2009",
+  },
+  {
+    question: "Which HTML tag is used to define an image?",
+    options: ["<image>", "<img>", "<src>", "<pic>"],
+    answer: "<img>",
+  },
+  {
+    question: "What is React primarily used for?",
+    options: ["Database design", "Backend APIs", "UI building", "Data encryption"],
+    answer: "UI building",
+  },
+  {
+    question: "What does API stand for?",
+    options: [
+      "Application Programming Interface",
+      "Advanced Protocol Interface",
+      "Applied Program Internet",
+      "Automatic Processing Integration",
+    ],
+    answer: "Application Programming Interface",
+  },
+];
+
 function App() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [current, setCurrent] = useState(0);
+  const [score, setScore] = useState(0);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [showResult, setShowResult] = useState(false);
 
-  useEffect(() => {
-    sdk.actions.ready();
+  const handleSelect = (option: string) => {
+    setSelected(option);
+    if (option === questions[current].answer) {
+      setScore(score + 1);
+    }
+    setTimeout(() => {
+      const next = current + 1;
+      if (next < questions.length) {
+        setCurrent(next);
+        setSelected(null);
+      } else {
+        setShowResult(true);
+      }
+    }, 800);
+  };
 
-    fetch("https://newsapi.org/v2/everything?q=crypto&sortBy=publishedAt&language=en&apiKey=6a40447e5d2845d1bbb46abf48e506dc")
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data.articles)) {
-          const mapped = data.articles.map((item: any) => ({
-            title: item.title ?? "Untitled",
-            url: item.url ?? "#",
-            source: item.source?.name ?? "Unknown",
-            sentiment: "neutral", // NewsAPI tidak punya data sentimen
-            image: item.urlToImage ?? null,
-          }));
-          setArticles(mapped);
-        } else {
-          setError("Unexpected response format.");
-        }
-      })
-      .catch(() => {
-        setError("Failed to fetch articles.");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
-
-  const getSentimentColor = (sentiment: string) => {
-    if (sentiment === "bullish") return "text-green-400";
-    if (sentiment === "bearish") return "text-red-400";
-    return "text-gray-400";
+  const getOptionClass = (option: string) => {
+    if (!selected) return "bg-gray-800 hover:bg-gray-700";
+    if (option === questions[current].answer) return "bg-green-600";
+    if (option === selected) return "bg-red-600";
+    return "bg-gray-800";
   };
 
   return (
     <div className="p-4 text-white bg-gray-900 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6">📰 Watchcoin - Crypto News</h1>
+      <h1 className="text-2xl font-bold mb-6">🧠 QuizTime</h1>
 
-      {loading && <p className="text-gray-400">Loading news...</p>}
-      {error && <p className="text-red-400">{error}</p>}
-
-      <div className="space-y-6">
-        {articles.map((article, idx) => (
-          <div key={idx} className="bg-gray-800 rounded-xl p-4 shadow">
-            {article.image && (
-              <img
-                src={article.image}
-                alt="thumbnail"
-                className="rounded mb-4 w-full max-h-48 object-cover"
-              />
-            )}
-            <h2 className="text-xl font-semibold">{article.title}</h2>
-            <div className="text-sm mt-1 flex justify-between text-gray-400">
-              <span>Source: {article.source}</span>
-              <span className={getSentimentColor(article.sentiment)}>
-                {article.sentiment.charAt(0).toUpperCase() + article.sentiment.slice(1)}
-              </span>
-            </div>
-            <a
-              href={article.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 inline-block text-blue-400 hover:underline"
-            >
-              Read more →
-            </a>
-          </div>
-        ))}
-      </div>
+      {showResult ? (
+        <div className="text-center mt-20">
+          <h2 className="text-3xl font-bold mb-4">
+            Your Score: {score} / {questions.length}
+          </h2>
+          <button
+            className="mt-4 bg-blue-600 px-4 py-2 rounded hover:bg-blue-700"
+            onClick={() => {
+              setCurrent(0);
+              setScore(0);
+              setSelected(null);
+              setShowResult(false);
+            }}
+          >
+            Try Again
+          </button>
+        </div>
+      ) : (
+        <div>
+          <h2 className="text-xl font-semibold mb-4">
+            {questions[current].question}
+          </h2>
+          <ul className="space-y-3">
+            {questions[current].options.map((option) => (
+              <li key={option}>
+                <button
+                  onClick={() => handleSelect(option)}
+                  className={`w-full text-left px-4 py-2 rounded ${getOptionClass(option)}`}
+                  disabled={!!selected}
+                >
+                  {option}
+                </button>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-6 text-sm text-gray-400">
+            Question {current + 1} of {questions.length}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
