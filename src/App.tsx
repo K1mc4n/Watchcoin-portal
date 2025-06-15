@@ -5,6 +5,7 @@ type Article = {
   title: string;
   url: string;
   source: string;
+  sentiment: string;
   image: string | null;
 };
 
@@ -16,15 +17,16 @@ function App() {
   useEffect(() => {
     sdk.actions.ready();
 
-    fetch("https://api.coinstats.app/public/v1/news?skip=0&limit=10&category=cryptocurrency")
+    fetch("https://newsapi.org/v2/everything?q=crypto&sortBy=publishedAt&language=en&apiKey=6a40447e5d2845d1bbb46abf48e506dc")
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data.news)) {
-          const mapped = data.news.map((item: any) => ({
-            title: item.title,
-            url: item.link,
-            source: item.source || "Unknown",
-            image: item.imgURL || null,
+        if (Array.isArray(data.articles)) {
+          const mapped = data.articles.map((item: any) => ({
+            title: item.title ?? "Untitled",
+            url: item.url ?? "#",
+            source: item.source?.name ?? "Unknown",
+            sentiment: "neutral", // NewsAPI tidak punya data sentimen
+            image: item.urlToImage ?? null,
           }));
           setArticles(mapped);
         } else {
@@ -39,54 +41,44 @@ function App() {
       });
   }, []);
 
+  const getSentimentColor = (sentiment: string) => {
+    if (sentiment === "bullish") return "text-green-400";
+    if (sentiment === "bearish") return "text-red-400";
+    return "text-gray-400";
+  };
+
   return (
-    <div className="bg-white text-black min-h-screen px-4 py-6 font-sans">
-      <header className="flex items-center justify-between border-b pb-4 mb-6">
-        <div className="flex items-center space-x-2">
-          <div className="bg-yellow-400 text-white font-bold w-8 h-8 rounded-full flex items-center justify-center">
-            W
-          </div>
-          <h1 className="text-xl font-bold">WATCHCOIN</h1>
-        </div>
-        <nav className="space-x-4 text-sm">
-          <a href="#" className="hover:underline">Home</a>
-          <a href="#" className="hover:underline">News</a>
-          <a href="#" className="hover:underline">Contact</a>
-        </nav>
-      </header>
+    <div className="p-4 text-white bg-gray-900 min-h-screen">
+      <h1 className="text-2xl font-bold mb-6">📰 Watchcoin - Crypto News</h1>
 
-      <section className="mb-8">
-        <h2 className="text-4xl font-bold leading-snug">Read News While Earning</h2>
-        <button className="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
-          Explore
-        </button>
-      </section>
+      {loading && <p className="text-gray-400">Loading news...</p>}
+      {error && <p className="text-red-400">{error}</p>}
 
-      {loading && <p className="text-gray-500">Loading news...</p>}
-      {error && <p className="text-red-500">{error}</p>}
-
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="space-y-6">
         {articles.map((article, idx) => (
-          <div key={idx} className="border rounded p-4 flex space-x-4 items-start hover:shadow-md transition">
-            <div className="w-16 h-16 bg-gray-200 flex-shrink-0 overflow-hidden rounded">
-              {article.image ? (
-                <img src={article.image} alt="thumbnail" className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400">📰</div>
-              )}
+          <div key={idx} className="bg-gray-800 rounded-xl p-4 shadow">
+            {article.image && (
+              <img
+                src={article.image}
+                alt="thumbnail"
+                className="rounded mb-4 w-full max-h-48 object-cover"
+              />
+            )}
+            <h2 className="text-xl font-semibold">{article.title}</h2>
+            <div className="text-sm mt-1 flex justify-between text-gray-400">
+              <span>Source: {article.source}</span>
+              <span className={getSentimentColor(article.sentiment)}>
+                {article.sentiment.charAt(0).toUpperCase() + article.sentiment.slice(1)}
+              </span>
             </div>
-            <div className="flex-1">
-              <h3 className="font-bold text-lg">{article.title}</h3>
-              <p className="text-sm text-gray-600">Source: {article.source}</p>
-              <a
-                href={article.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 text-sm hover:underline mt-1 inline-block"
-              >
-                Read more →
-              </a>
-            </div>
+            <a
+              href={article.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-block text-blue-400 hover:underline"
+            >
+              Read more →
+            </a>
           </div>
         ))}
       </div>
