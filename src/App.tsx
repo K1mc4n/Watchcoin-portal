@@ -23,10 +23,11 @@ function App() {
         if (Array.isArray(data.results)) {
           const mapped = data.results.map((item: any) => {
             const url =
-              item.metadata?.original_url || // ✅ Langsung ke sumber asli
+              item.metadata?.original_url || // Prefer original source
               item.domain_link ||
               item.url ||
               "#";
+
             return {
               title: item.title ?? "Untitled",
               url: url.startsWith("http") ? url : "#",
@@ -86,6 +87,9 @@ function App() {
             >
               Read more →
             </a>
+            <p className="text-xs text-gray-500 mt-2 break-all">
+              Link: {article.url}
+            </p>
           </div>
         ))}
       </div>
