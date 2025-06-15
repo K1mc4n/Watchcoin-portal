@@ -22,12 +22,15 @@ function App() {
       .then((data) => {
         if (Array.isArray(data.results)) {
           const mapped = data.results.map((item: any) => {
-            const rawUrl = item.domain_link || item.url || "#";
-            const url = rawUrl.startsWith("http") ? rawUrl : "#";
+            const url =
+              item.metadata?.original_url || // Langsung ke sumber berita
+              item.domain_link ||
+              item.url ||
+              "#";
 
             return {
               title: item.title ?? "Untitled",
-              url,
+              url: url.startsWith("http") ? url : "#",
               source: item.source?.title ?? "Unknown",
               sentiment: item.sentiment ?? "neutral",
               image: item.metadata?.image ?? null,
