@@ -87,7 +87,7 @@ const questions: Question[] = [
 
 function App() {
   useEffect(() => {
-    sdk.actions.ready(); // Notify Farcaster Frame
+    sdk.actions.ready();
   }, []);
 
   const [current, setCurrent] = useState(0);
@@ -98,12 +98,11 @@ function App() {
   const handleSelect = (option: string) => {
     setSelected(option);
     if (option === questions[current].answer) {
-      setScore(score + 1);
+      setScore((prev) => prev + 1);
     }
     setTimeout(() => {
-      const next = current + 1;
-      if (next < questions.length) {
-        setCurrent(next);
+      if (current + 1 < questions.length) {
+        setCurrent(current + 1);
         setSelected(null);
       } else {
         setShowResult(true);
@@ -129,7 +128,7 @@ function App() {
           </h2>
 
           <a
-            href={`https://warpcast.com/~/compose?text=I scored ${score}/${questions.length} on the Crypto & Farcaster Quiz! Try it here: https://watchcoin.vercel.app`}
+            href={`https://warpcast.com/~/compose?text=I scored ${score}/${questions.length} on the Crypto & Farcaster Quiz! Try it here: https://watchcoin-portal.vercel.app/`}
             target="_blank"
             rel="noopener noreferrer"
             className="block bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded mt-4"
@@ -159,9 +158,7 @@ function App() {
               <li key={option}>
                 <button
                   onClick={() => handleSelect(option)}
-                  className={`w-full text-left px-4 py-2 rounded ${getOptionClass(
-                    option
-                  )}`}
+                  className={`w-full text-left px-4 py-2 rounded ${getOptionClass(option)}`}
                   disabled={!!selected}
                 >
                   {option}
