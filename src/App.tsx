@@ -4,15 +4,23 @@ import { useAccount, useConnect } from "wagmi";
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = "https://eimssxysdgftbtpfnsns.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpbXNzeHlzZGdmdGJ0cGZuc25zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5MjkwNjYsImV4cCI6MjA2NTUwNTA2Nn0.2c9GXhsKaZofCK_gVD5wpLsRFhFrNzMarABx3R65F54";
+const supabaseKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpbXNzeHlzZGdmdGJ0cGZuc25zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5MjkwNjYsImV4cCI6MjA2NTUwNTA2Nn0.2c9GXhsKaZofCK_gVD5wpLsRFhFrNzMarABx3R65F54";
 const supabase = createClient(supabaseUrl, supabaseKey);
+
+// ✅ Tambahkan tipe artikel
+type Article = {
+  title: string;
+  description?: string;
+  link: string;
+};
 
 function App() {
   useEffect(() => {
     sdk.actions.ready();
   }, []);
 
-  const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [leaderboard, setLeaderboard] = useState<{ [key: string]: number }>({});
   const { isConnected, address } = useAccount();
 
@@ -92,9 +100,7 @@ function ConnectMenu() {
   const { connect, connectors } = useConnect();
 
   if (isConnected) {
-    return (
-      <div className="text-green-400">Connected: {address}</div>
-    );
+    return <div className="text-green-400">Connected: {address}</div>;
   }
 
   return (
