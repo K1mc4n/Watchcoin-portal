@@ -21,13 +21,18 @@ function App() {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data.results)) {
-          const mapped = data.results.map((item: any) => ({
-            title: item.title ?? "Untitled",
-            url: item.domain_link ?? item.url ?? "#", // ⬅️ pakai domain_link duluan
-            source: item.source?.title ?? "Unknown",
-            sentiment: item.sentiment ?? "neutral",
-            image: item.metadata?.image ?? null,
-          }));
+          const mapped = data.results.map((item: any) => {
+            const rawUrl = item.domain_link || item.url || "#";
+            const url = rawUrl.startsWith("http") ? rawUrl : "#";
+
+            return {
+              title: item.title ?? "Untitled",
+              url,
+              source: item.source?.title ?? "Unknown",
+              sentiment: item.sentiment ?? "neutral",
+              image: item.metadata?.image ?? null,
+            };
+          });
           setArticles(mapped);
         } else {
           setError("Unexpected response format.");
