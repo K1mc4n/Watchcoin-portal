@@ -117,7 +117,7 @@ function App() {
     return "bg-gray-800";
   };
 
-  const shareText = `I scored ${score}/${questions.length} on the Crypto & Farcaster Quiz! Try it here: https://watchcoin-portal.vercel.app/`;
+  const shareText = `Frame by: @watchcoin\nI scored ${score}/${questions.length} on the Crypto & Farcaster Quiz!\nTry it here: https://watchcoin-portal.vercel.app/`;
   const encodedText = encodeURIComponent(shareText);
 
   return (
@@ -129,7 +129,6 @@ function App() {
           <h2 className="text-3xl font-bold mb-4">
             Your Score: {score} / {questions.length}
           </h2>
-
           <a
             href={`https://warpcast.com/~/compose?text=${encodedText}`}
             target="_blank"
@@ -138,7 +137,6 @@ function App() {
           >
             Share on Farcaster
           </a>
-
           <button
             className="mt-4 bg-blue-600 px-4 py-2 rounded hover:bg-blue-700"
             onClick={() => {
