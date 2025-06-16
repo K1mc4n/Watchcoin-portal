@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { sdk } from "@farcaster/frame-sdk";
+import { supabase } from "./supabaseClient";
 
+// Question type and content
 type Question = {
   question: string;
   options: string[];
@@ -15,22 +17,12 @@ const questions: Question[] = [
   },
   {
     question: "What does DeFi stand for?",
-    options: [
-      "Decentralized Finance",
-      "Defined Finance",
-      "Digital Fund",
-      "Default Finance",
-    ],
+    options: ["Decentralized Finance", "Defined Finance", "Digital Fund", "Default Finance"],
     answer: "Decentralized Finance",
   },
   {
     question: "Who created Bitcoin?",
-    options: [
-      "Vitalik Buterin",
-      "Elon Musk",
-      "Satoshi Nakamoto",
-      "Brian Armstrong",
-    ],
+    options: ["Vitalik Buterin", "Elon Musk", "Satoshi Nakamoto", "Brian Armstrong"],
     answer: "Satoshi Nakamoto",
   },
   {
@@ -40,12 +32,7 @@ const questions: Question[] = [
   },
   {
     question: "What is Farcaster?",
-    options: [
-      "A web hosting service",
-      "A decentralized social protocol",
-      "A crypto wallet",
-      "An NFT marketplace",
-    ],
+    options: ["A web hosting service", "A decentralized social protocol", "A crypto wallet", "An NFT marketplace"],
     answer: "A decentralized social protocol",
   },
   {
@@ -55,12 +42,7 @@ const questions: Question[] = [
   },
   {
     question: "What is a Frame in Farcaster?",
-    options: [
-      "An image container",
-      "An interactive post",
-      "A Farcaster wallet",
-      "A block explorer",
-    ],
+    options: ["An image container", "An interactive post", "A Farcaster wallet", "A block explorer"],
     answer: "An interactive post",
   },
   {
@@ -70,12 +52,7 @@ const questions: Question[] = [
   },
   {
     question: "What does a crypto wallet store?",
-    options: [
-      "Cryptocurrency balances",
-      "Private and public keys",
-      "Usernames",
-      "Social posts",
-    ],
+    options: ["Cryptocurrency balances", "Private and public keys", "Usernames", "Social posts"],
     answer: "Private and public keys",
   },
   {
@@ -90,10 +67,13 @@ function App() {
     sdk.actions.ready();
   }, []);
 
+  const [username, setUsername] = useState("");
+  const [startQuiz, setStartQuiz] = useState(false);
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
+  const [leaderboard, setLeaderboard] = useState<any[]>([]);
 
   const handleSelect = (option: string) => {
     setSelected(option);
@@ -106,6 +86,7 @@ function App() {
         setSelected(null);
       } else {
         setShowResult(true);
+        saveScore();
       }
     }, 800);
   };
@@ -117,14 +98,51 @@ function App() {
     return "bg-gray-800";
   };
 
+  const saveScore = async () => {
+    const { error } = await supabase.from("leaderboard").insert([
+      {
+        username,
+        score,
+      },
+    ]);
+    if (error) console.error("Error saving score:", error);
+  };
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      const { data, error } = await supabase
+        .from("leaderboard")
+        .select("*")
+        .order("score", { ascending: false })
+        .limit(10);
+      if (data) setLeaderboard(data);
+    };
+    if (showResult) fetchLeaderboard();
+  }, [showResult]);
+
   const shareText = `Frame by: @watchcoin\nI scored ${score}/${questions.length} on the Crypto & Farcaster Quiz!\nTry it here: https://watchcoin-portal.vercel.app/`;
   const encodedText = encodeURIComponent(shareText);
 
   return (
     <div className="p-4 text-white bg-gray-900 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6">🧠 Crypto & Farcaster Quiz</h1>
-
-      {showResult ? (
+      {!startQuiz ? (
+        <div className="text-center mt-20">
+          <h1 className="text-2xl font-bold mb-4">Enter your Farcaster username</h1>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="@username"
+            className="text-black px-4 py-2 rounded"
+          />
+          <button
+            className="mt-4 bg-green-600 px-4 py-2 rounded text-white"
+            onClick={() => username && setStartQuiz(true)}
+          >
+            Start Quiz
+          </button>
+        </div>
+      ) : showResult ? (
         <div className="text-center mt-20">
           <h2 className="text-3xl font-bold mb-4">
             Your Score: {score} / {questions.length}
@@ -144,10 +162,22 @@ function App() {
               setScore(0);
               setSelected(null);
               setShowResult(false);
+              setStartQuiz(false);
+              setUsername("");
             }}
           >
             Play Again
           </button>
+          <div className="mt-10">
+            <h3 className="text-xl font-semibold mb-2">🏆 Leaderboard</h3>
+            <ul className="text-left">
+              {leaderboard.map((entry, index) => (
+                <li key={index}>
+                  {index + 1}. {entry.username} - {entry.score}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       ) : (
         <div>
